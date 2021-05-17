@@ -17,7 +17,7 @@ CREATE TABLE role (
     id INT NOT NULL AUTO_INCREMENT
     title VARCHAR(30) NOT NULL,
     salary DECIMAL NOT NULL, --Allows the salary variable to use decimals
-    department_id INT NOT NULL,
+    department_id INT NOT NULL, --Passes in the department_id defined above in the department table
     PRIMARY KEY (id)
 );
 
@@ -26,7 +26,7 @@ CREATE TABLE employees (
     id INT NOT NULL AUTO_INCREMENT,
     first_name  VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    role_id VARCHAR(30) NOT NULL,
+    role_id INT NOT NULL,
     manager_id INT NOT NULL,
     PRIMARY KEY(id)
 );
