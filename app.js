@@ -90,6 +90,7 @@ function viewEmployees() {
     })
 };
 
+//View Departments function
 function viewDepartments() {
     var query = 'SELECT * FROM department'; //Selects all the items from the department table
     connection.query(query, function(err, res) {
@@ -100,6 +101,7 @@ function viewDepartments() {
     })
 };
 
+//View Roles function
 function viewRoles() {
     var query = 'SELECT * FROM role'; //Selects all the items from the role table
     connection.query(query, function(err, res) {
@@ -110,9 +112,10 @@ function viewRoles() {
     })
 };
 
+//Add Employee function
 function addEmployee() {
-    connection.query('SELCT * FROM role', function (err, res) {
-        if(err) throw err;
+    connection.query('SELCT * FROM role', function (err, res) { //Selects all values from the role table
+        if(err) throw err; 
         inquirer
             .prompt([
                 {
@@ -134,26 +137,26 @@ function addEmployee() {
                     name: 'role',
                     type: 'list',
                     choices: function() {
-                        var roles = [];
+                        var roles = []; //Create an array for the roles
                         for(let i = 0; i < res.length; i++) {
-                            roles.push(res[i].title);
+                            roles.push(res[i].title); //For every value within the response of the query, push the title to the roles array, thereby creating an array with all the current roles in it
                         }
                         return roles;
                     },
-                    message: "What is the employeese role?"
+                    message: "What is the employee's role?"
                 }
             ]).then(function (answer) {
                 let role_id;
                 for(let a = 0; a < res.length; a++) {
-                    if(res[a].title == answer.role) {
+                    if(res[a].title == answer.role) { //Compares the response title to the users answer and if theyre the same, creates a variable role_id that is equal to the response id.
                         role_id = res[a].id;
                         console.log(role_id);
                     }
                 }
                 connection.query(
-                    'INSERT INTO employee SET ?',
+                    'INSERT INTO employee SET ?', //Adds the new employee into the employee table
                     {
-                        first_name: answer.first_name,
+                        first_name: answer.first_name, 
                         last_name: answer.last_name,
                         manager_id: answer.manager_id,
                         role_id: role_id
