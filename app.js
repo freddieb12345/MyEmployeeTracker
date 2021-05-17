@@ -109,3 +109,60 @@ function viewRoles() {
         menu(); //Brings the user back to the menu
     })
 };
+
+function addEmployee() {
+    connection.query('SELCT * FROM role', function (err, res) {
+        if(err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name: 'first_name',
+                    type: 'input',
+                    message: "What is the new employee's first name?"
+                },
+                {
+                    name: 'last_name',
+                    type: 'input',
+                    message: "What is the new employee's last name?"
+                },
+                {
+                    name: 'manager_id',
+                    type: 'input',
+                    message: "What is the new employee's manger's ID?"
+                },
+                {
+                    name: 'role',
+                    type: 'list',
+                    choices: function() {
+                        var roles = [];
+                        for(let i = 0; i < res.length; i++) {
+                            roles.push(res[i].title);
+                        }
+                        return roles;
+                    },
+                    message: "What is the employeese role?"
+                }
+            ]).then(function (answer) {
+                let role_id;
+                for(let a = 0; a < res.length; a++) {
+                    if(res[a].title == answer.role) {
+                        role_id = res[a].id;
+                        console.log(role_id);
+                    }
+                }
+                connection.query(
+                    'INSERT INTO employee SET ?',
+                    {
+                        first_name: answer.first_name,
+                        last_name: answer.last_name,
+                        manager_id: answer.manager_id,
+                        role_id: role_id
+                    },
+                    function (err){
+                        if (err) throw err;
+                        console.log('Your employee has been added!');
+                        menu();
+                    })
+            })
+    })
+};

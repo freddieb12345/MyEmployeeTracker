@@ -18,5 +18,8 @@ VALUES
 ('Web Developer', 40000, 4),
 ('Intern', 18000, 5),
 
-
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES
+('Freddie', 'Brewin', 1, 123)
+('Dan', 'James', 2, 456)
 
