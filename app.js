@@ -2,6 +2,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
+const { query } = require('express');
 
 
 //Create the connection to the mysql database
@@ -83,7 +84,7 @@ function viewEmployees() {
     connection.query(query, function(err, res) {
         if (err) throw err; //If error, throw error
         console.log(res.length + ' Employees found'); //Logs the number of employees found
-        console.table('Employees:', res); //Logs the response from the query, i.e the list of employees
+        console.table('Employees:', res); //Logs the response from the query, i.e the list of employees as a table
         menu(); //Brings the user back to the menu
     })
 };
@@ -94,7 +95,7 @@ function viewDepartments() {
     connection.query(query, function(err, res) {
         if (err) throw err; //If error, throw error
         console.log(res.length + ' Departments found'); //Logs the number of departments found
-        console.table('Departments', res); //Logs the response from the query, i.e the list of departments
+        console.table('Departments', res); //Logs the response from the query, i.e the list of departments as a table
         menu(); //Brings the user back to the menu
     })
 };
@@ -105,7 +106,7 @@ function viewRoles() {
     connection.query(query, function(err, res) {
         if (err) throw err; //If error, throw error
         console.log(res.length + ' Roles found'); //Logs the number of roles found
-        console.table('Roles', res); //Logs the response from the query, i.e the list of roles
+        console.table('Roles', res); //Logs the response from the query, i.e the list of roles as a table
         menu(); //Brings the user back to the menu
     })
 };
@@ -179,17 +180,69 @@ function addDepartment() {
             }
         ])
         .then(function(answer) {
-            connection.query(
+            connection.query( 
                 'INSERT INTO department SET ?',
                 {
-                    name: answer.newDepartment
+                    name: answer.newDepartment //Inserts the users answer into the department table
                 });
-            var query = 'SELECT * FROM department';
+            var query = 'SELECT * FROM department'; //Selects all items in the department table
             connection.query(query,function(err, res){
-                if(err) throw err;
+                if(err) throw err; //If error throw error
                 console.log('The new department has been added to the database');
-                console.table(res);
+                console.table(res); //Logs the response from the query, i.e the list of departments as a table
                 menu();
             })
         })
+};
+
+function addRole() {
+    connection.query('SELECT * FROM department', function(err, res){ //Selects all data from the department table
+        if(err) throw err; 
+        inquirer
+            .prompt([
+                {
+                    name:'newRole',
+                    type:'input',
+                    message:'Input the new role you would like to add to the databse'
+                },
+                {
+                    name: 'salary',
+                    type: 'input',
+                    message: 'Input the salary of this new role (As an number)'
+                },
+                {
+                    name: 'Department',
+                    type: 'list',
+                    message: 'What department is the role a part of?',
+                    choices: function(){
+                        var departmentArray = [];
+                        for (let i = 0; i < res.length; i++) {
+                            departmentArray.push(res[i].name);
+                        } //Creates a department array and pushes all the names from the department table into it 
+                        return departmentArray; //Returns the department array and shows it to the user as the choices for the above question
+                    },
+                }
+            ]) .then(function(answer) {
+                let department_id;
+                for (let a =0; a < res.length; a++) { //Loops over the response from the query and checks if the users input matches any of the names withing the response query and then assigns the department_id to be the same as the response id
+                    if (res[a].name == answer.Department) {
+                        department_id = res[a].id;
+                    }
+                }
+                connection.query( //Inserts the new role into the role table
+                    'INSERT INTO role SET ?',
+                    {
+                        title: answer.newRole,
+                        salary: answer.salary,
+                        department_id: department_id
+                    });
+                    var query = 'SELECT * FROM role';
+                    connection.query(query,function(err,res) {
+                        if(err)throw err;
+                        console.log('The new role has been added');
+                        console.table('Roles:', res); //Logs the response from the query, i.e the list of roles as a table
+                        menu();
+                    })
+            })
+    })
 };
