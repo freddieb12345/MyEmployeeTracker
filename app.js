@@ -224,7 +224,7 @@ function addRole() {
                 }
             ]) .then(function(answer) {
                 let department_id;
-                for (let a =0; a < res.length; a++) { //Loops over the response from the query and checks if the users input matches any of the names withing the response query and then assigns the department_id to be the same as the response id
+                for (let a = 0; a < res.length; a++) { //Loops over the response from the query and checks if the users input matches any of the names withing the response query and then assigns the department_id to be the same as the response id
                     if (res[a].name == answer.Department) {
                         department_id = res[a].id;
                     }
@@ -246,6 +246,65 @@ function addRole() {
             })
     })
 };
+
+
+//Update role function
+function updateRole() {
+    connection.query('SELECT * FROM employee', function(err, res) { //Select all data from the employee table
+        if(err) throw err;
+        inquirer
+            .prompt([
+                {
+                   name: 'Employee',
+                   type: 'list',
+                   message: "Select the ID of the employee who's role you would like to update",
+                   choices: function(){ //Loop over the employee table and push all the employee id's into the employeeIdArray
+                    var employeeIdArray = [];
+                    for (let i = 0; i < res.length; i++) {
+                        employeeIdArray.push(res[i].id);
+                    } 
+                    return employeeIdArray;
+                    }, 
+                },
+                {
+                    name: "employeesNewRole",
+                    type: 'input',
+                    message: "Please input the new role for the selected employee"
+                }
+            ]) .then(function(answer) {
+                    let employee_id;
+                    for(let a = 0; a < res.length; a++) { //Loop over the employee table and compare the id's with the users answer. If they are the same, set employee_id to be equal to the the respons id
+                        if (res[a].id === answer.Employee) {
+                            employee_id = res[a].id
+                            console.log(employee_id);
+                        }
+                    }
+                    var query = 'SELECT * FROM role'; //Select all data from role table
+                    connection.query(query, function(error,response) {
+                        if (error) throw err;
+                        let newRole_id;
+                        for (let b = 0; b < response.length; b++) { //Loop over the role data and compare the response titles with the users answer. If they are the same, set the response id to be equal to the newRoleId
+                            if (response[b].title == answer.employeesNewRole) {
+                                newRole_id = response[b].id;
+                                console.log(newRole_id)
+                            } 
+                        }
+                        connection.query(`UPDATE employee SET role_id = ${newRole_id} WHERE id = ${employee_id}`); //Replace the role_id of the employee id in the employee table
+                        connection.query('SELECT * FROM employee', function(err, res) {
+                            if (err) throw err;
+                            console.log('Employees role updataed');
+                            console.table('Roles: ', res);
+                            menu();
+                        })
+                    })
+            }) 
+    })
+    
+};
+    
+
+//UPDATE employee SET role_id = aasdfasdfa WHERE id = asdfasdfas
+
 
 //Function to exit application
 function exit() {
