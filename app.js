@@ -70,7 +70,7 @@ function menu() {
                     updateManager();
                     break;
                 case 'EXIT database':
-                    exitApp();
+                    exit();
                     break;
                 default:
                     break;
@@ -246,3 +246,8 @@ function addRole() {
             })
     })
 };
+
+//Function to exit application
+function exit() {
+    connection.end();
+}
