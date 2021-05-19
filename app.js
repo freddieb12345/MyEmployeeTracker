@@ -2,8 +2,6 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
-const { exit } = require('node:process');
-const { connect } = require('node:http2');
 
 
 //Create the connection to the mysql database
@@ -84,8 +82,8 @@ function viewEmployees() {
     var query = 'SELECT * FROM employee'; //Selects all the items from the employee table
     connection.query(query, function(err, res) {
         if (err) throw err; //If error, throw error
-        console.log(res.length + 'Employees found'); //Logs the number of employees found
-        console.log('Employees:', res); //Logs the response from the query, i.e the list of employees
+        console.log(res.length + ' Employees found'); //Logs the number of employees found
+        console.table('Employees:', res); //Logs the response from the query, i.e the list of employees
         menu(); //Brings the user back to the menu
     })
 };
@@ -95,8 +93,8 @@ function viewDepartments() {
     var query = 'SELECT * FROM department'; //Selects all the items from the department table
     connection.query(query, function(err, res) {
         if (err) throw err; //If error, throw error
-        console.log(res.length + 'Departments found'); //Logs the number of departments found
-        console.log('Departments', res); //Logs the response from the query, i.e the list of departments
+        console.log(res.length + ' Departments found'); //Logs the number of departments found
+        console.table('Departments', res); //Logs the response from the query, i.e the list of departments
         menu(); //Brings the user back to the menu
     })
 };
@@ -106,15 +104,15 @@ function viewRoles() {
     var query = 'SELECT * FROM role'; //Selects all the items from the role table
     connection.query(query, function(err, res) {
         if (err) throw err; //If error, throw error
-        console.log(res.length + 'Roles found'); //Logs the number of roles found
-        console.log('Roles', res); //Logs the response from the query, i.e the list of roles
+        console.log(res.length + ' Roles found'); //Logs the number of roles found
+        console.table('Roles', res); //Logs the response from the query, i.e the list of roles
         menu(); //Brings the user back to the menu
     })
 };
 
 //Add Employee function
 function addEmployee() {
-    connection.query('SELCT * FROM role', function (err, res) { //Selects all values from the role table
+    connection.query('SELECT * FROM role', function (err, res) { //Selects all values from the role table
         if(err) throw err; 
         inquirer
             .prompt([
@@ -168,4 +166,30 @@ function addEmployee() {
                     })
             })
     })
+};
+
+//Add department function
+function addDepartment() {
+    inquirer
+        .prompt([
+            {
+                name: 'newDepartment',
+                type: 'input',
+                message: 'Input what department you would like to add to the database'
+            }
+        ])
+        .then(function(answer) {
+            connection.query(
+                'INSERT INTO department SET ?',
+                {
+                    name: answer.newDepartment
+                });
+            var query = 'SELECT * FROM department';
+            connection.query(query,function(err, res){
+                if(err) throw err;
+                console.log('The new department has been added to the database');
+                console.table(res);
+                menu();
+            })
+        })
 };
