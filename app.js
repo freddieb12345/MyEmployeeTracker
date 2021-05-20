@@ -380,7 +380,7 @@ function deleteRole() {
                 {
                     name: 'deletedRole',
                     type: 'input',
-                    message: 'Please input the if of the role you would like to be removed from the database'
+                    message: 'Please input the ID of the role you would like to be removed from the database'
                 }
             ]) .then(function(answer) {
                 let deletedRole;
