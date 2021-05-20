@@ -1,6 +1,6 @@
 Repository Title: MyEmployeeTracker                    ![license](https://img.shields.io/github/license/DAVFoundation/captain-n3m0.svg?style=flat-square)
 Description
-    - undefined 
+    - This is a command line application that allows the user to see all the employees, roles and departments within their company
     - This allows me to better organise and plan my business 
     - From this project, i learned how to add, update and delete data from a mysql database 
 
