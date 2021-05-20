@@ -339,6 +339,37 @@ function deleteEmployee() {
             })
     })
 }
+
+//Function to delete a department
+function deleteDepartment() {
+    connection.query('SELECT * FROM department' , function(err,res) {
+        console.table('Departments: ', res);
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name:'deleteDepartment',
+                    type:'input',
+                    message:'Please input the ID of the department you would like to delete'
+                }
+            ]) .then(function(answer) {
+                let deletedDepartmentId;
+                for (i = 0; i < res.length; i++) {
+                    if (res[i].id == answer.deleteDepartment) {
+                        deletedDepartmentId = res[i].id;
+                        console.log(deletedDepartmentId);
+                    }
+                }
+                connection.query(`DELETE FROM department WHERE id = ${deletedDepartmentId}`)
+                connection.query(`SELECT * FROM department`, function(err, res) {
+                    if (err) throw err;
+                    console.log('Department sucessfully deleted from the database');
+                    console.table('Departments: ', res);
+                    menu();
+                })
+            })
+    })
+}
     
 //Function to exit application
 function exit() {
