@@ -312,7 +312,7 @@ function updateRole() {
 //Function to delete employee
 function deleteEmployee() {
     connection.query('SELECT * FROM employee', function(err, res) {
-        console.table('Employees: ', res);
+        console.table('Employees: ', res); //Show user the current employees list
         if (err) throw err;
         inquirer
             .prompt([
@@ -323,14 +323,14 @@ function deleteEmployee() {
                 }
             ]) .then(function(answer) {
                 let deletedEmployee_id;
-                for (i = 0; i < res.length; i++) {
+                for (i = 0; i < res.length; i++) { //Loop over the query response and compare with the users answer
                     if (res[i].id == answer.deleteEmployee) {
                         deletedEmployee_id = res[i].id;
                         console.log(deletedEmployee_id);
                     }
                 }
-                connection.query(`DELETE FROM employee WHERE id = ${deletedEmployee_id}`);
-                connection.query('SELECT * FROM employee', function(err, res) {
+                connection.query(`DELETE FROM employee WHERE id = ${deletedEmployee_id}`); //Delete the selected employee from the database
+                connection.query('SELECT * FROM employee', function(err, res) { //Show the user the updated user table
                     if (err) throw err;
                     console.log('Employee sucessfully deleted from the database');
                     console.table('Employees:', res);
