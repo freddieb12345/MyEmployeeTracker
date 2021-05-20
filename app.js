@@ -36,9 +36,10 @@ function menu() {
                 'Add an Employee',
                 'Add a Department',
                 'Add a Role',
-                'Remove Employee',
                 'Update Employees Role',
-                'Update Employees Manager',
+                'Delete Employee',
+                'Delete Department',
+                'Delete Role',
                 'EXIT database'
             ]
         //Creating switch cases that determine the next function depending on the selection of the above choices from the  user
@@ -66,8 +67,14 @@ function menu() {
                 case 'Update Employees Role':
                     updateRole();
                     break;
-                case 'Update Employees Manager':
-                    updateManager();
+                case 'Delete Employee':
+                    deleteEmployee();
+                    break;
+                case 'Delete Department':
+                    deleteDepartment();
+                    break;
+                case 'Delete Role':
+                    deleteRole();
                     break;
                 case 'EXIT database':
                     exit();
@@ -301,11 +308,38 @@ function updateRole() {
     })
     
 };
+
+//Function to delete employee
+function deleteEmployee() {
+    connection.query('SELECT * FROM employee', function(err, res) {
+        console.table('Employees: ', res);
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name: 'deleteEmployee',
+                    type: 'input',
+                    message: 'Please input the ID of the employee you would like to remove from the database'
+                }
+            ]) .then(function(answer) {
+                let deletedEmployee_id;
+                for (i = 0; i < res.length; i++) {
+                    if (res[i].id == answer.deleteEmployee) {
+                        deletedEmployee_id = res[i].id;
+                        console.log(deletedEmployee_id);
+                    }
+                }
+                connection.query(`DELETE FROM employee WHERE id = ${deletedEmployee_id}`);
+                connection.query('SELECT * FROM employee', function(err, res) {
+                    if (err) throw err;
+                    console.log('Employee sucessfully deleted from the database');
+                    console.table('Employees:', res);
+                    menu();
+                })
+            })
+    })
+}
     
-
-//UPDATE employee SET role_id = aasdfasdfa WHERE id = asdfasdfas
-
-
 //Function to exit application
 function exit() {
     connection.end();
